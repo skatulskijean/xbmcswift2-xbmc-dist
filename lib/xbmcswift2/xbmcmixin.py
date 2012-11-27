@@ -3,7 +3,6 @@ import sys
 import time
 import shelve
 from datetime import timedelta
-from functools import wraps
 
 import xbmcswift2
 from xbmcswift2 import xbmc, xbmcaddon, xbmcplugin
@@ -12,6 +11,29 @@ from xbmcswift2.logger import log
 from xbmcswift2.constants import VIEW_MODES, SortMethod
 from common import Modes, DEBUG_MODES
 from request import Request
+
+WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__')
+WRAPPER_UPDATES = ('__dict__',)
+
+
+def partial(func, *args, **kwds):
+    return lambda *fargs, **fkwds: func(*(args + fargs), **dict(kwds, **fkwds))
+
+
+def update_wrapper(wrapper, wrapped, assigned=WRAPPER_ASSIGNMENTS,
+                   updated=WRAPPER_UPDATES):
+    for attr in assigned:
+        setattr(wrapper, attr, getattr(wrapped, attr))
+    for attr in updated:
+        getattr(wrapper, attr).update(getattr(wrapped, attr, {}))
+    return wrapper
+
+
+def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+    return partial(
+        update_wrapper, wrapped=wrapped,
+        assigned=assigned, updated=updated
+    )
 
 
 class XBMCMixin(object):

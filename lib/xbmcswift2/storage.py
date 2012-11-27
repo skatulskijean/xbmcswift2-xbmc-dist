@@ -16,7 +16,7 @@ try:
 except ImportError:
     import pickle
 import shutil
-import collections
+import UserDict
 from datetime import datetime
 from xbmcswift2.logger import log
 
@@ -99,7 +99,7 @@ class _PersistentDictMixin(object):
             fileobj.seek(0)
             try:
                 return self.initial_update(loader(fileobj))
-            except Exception as e:
+            except Exception:
                 pass
         raise ValueError('File not in a supported format')
 
@@ -108,7 +108,7 @@ class _PersistentDictMixin(object):
         raise NotImplementedError
 
 
-class _Storage(collections.MutableMapping, _PersistentDictMixin):
+class _Storage(UserDict.DictMixin, _PersistentDictMixin):
     '''Storage that acts like a dict but also can persist to disk.
 
     :param filename: An absolute filepath to reprsent the storage on disk. The
@@ -147,7 +147,7 @@ class _Storage(collections.MutableMapping, _PersistentDictMixin):
         '''Returns the wrapped dict'''
         return self._items
 
-    initial_update = collections.MutableMapping.update
+    initial_update = UserDict.DictMixin.update
 
 
 class TimedStorage(_Storage):

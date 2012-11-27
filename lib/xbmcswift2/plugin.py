@@ -13,7 +13,7 @@ import sys
 import pickle
 import xbmcswift2
 from urllib import urlencode
-from functools import wraps
+from xbmcmixin import wraps
 from optparse import OptionParser
 try:
     from urlparse import parse_qs
@@ -197,8 +197,8 @@ class Plugin(XBMCMixin):
         # To accomdate self.redirect, we need to be able to parse a full url as
         # well
         if url is None:
-            url = sys.argv[0]
-            #url = sys.argv[2]
+            #url = sys.argv[0]
+            url = sys.argv[2]
             if len(sys.argv) == 3:
                 url += sys.argv[2]
         if handle is None:
@@ -283,8 +283,8 @@ class Plugin(XBMCMixin):
             raise AmbiguousUrlException
 
         pathqs = rule.make_path_qs(items)
-        return 'plugin://%s%s' % (self._addon_id, pathqs)
-        #return 'plugin://%s%s' % (sys.argv[0], pathqs)
+        #return 'plugin://%s%s' % (self._addon_id, pathqs)
+        return 'plugin://%s%s' % (sys.argv[0], pathqs)
 
     def _dispatch(self, path):
         for rule in self._routes:
