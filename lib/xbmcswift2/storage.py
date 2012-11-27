@@ -9,7 +9,7 @@
 '''
 import os
 import csv
-import json
+import simplejson as json
 import time
 try:
     import cPickle as pickle
@@ -42,9 +42,12 @@ class _PersistentDictMixin(object):
         if flag != 'n' and os.access(filename, os.R_OK):
             log.debug('Reading %s storage from disk at "%s"',
                       self.file_format, self.filename)
-            fileobj = open(filename, 'rb' if file_format == 'pickle' else 'r')
-            with fileobj:
-                self.load(fileobj)
+            if file_format == 'pickle':
+                fileobj = open(filename, 'rb')
+            else:
+                fileobj = open(filename, 'r')
+            self.load(fileobj)
+            fileobj.close()
 
     def sync(self):
         '''Write the dict to disk'''
@@ -52,14 +55,17 @@ class _PersistentDictMixin(object):
             return
         filename = self.filename
         tempname = filename + '.tmp'
-        fileobj = open(tempname, 'wb' if self.file_format == 'pickle' else 'w')
+        if self.file_format == 'pickle':
+            fileobj = open(tempname, 'wb')
+        else:
+            fileobj = open(tempname, 'w')
         try:
             self.dump(fileobj)
+            fileobj.close()
         except Exception:
+            fileobj.close()
             os.remove(tempname)
             raise
-        finally:
-            fileobj.close()
         shutil.move(tempname, self.filename)    # atomic commit
         if self.mode is not None:
             os.chmod(self.filename, self.mode)

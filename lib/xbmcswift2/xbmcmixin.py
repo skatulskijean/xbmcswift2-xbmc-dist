@@ -256,7 +256,10 @@ class XBMCMixin(object):
         '''
         # For each item if it is not already a list item, we need to create one
         _items = []
-        info_type = self.info_type if hasattr(self, 'info_type') else 'video'
+        if hasattr(self, 'info_type'):
+            info_type = self.info_type
+        else:
+            info_type = 'video'
 
         # Create ListItems for anything that is not already an instance of
         # ListItem
