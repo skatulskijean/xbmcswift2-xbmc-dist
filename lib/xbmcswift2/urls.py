@@ -148,7 +148,7 @@ class UrlRule(object):
                          if key in self._keywords)
 
         # Create the path
-        path = self._make_path(url_items)
+        path = '?path=%s' % quote_plus(self._make_path(url_items))
 
         # Extra arguments get tacked on to the query string
         qs_items = dict((key, val) for key, val in items.items()
@@ -156,7 +156,7 @@ class UrlRule(object):
         qs = self._make_qs(qs_items)
 
         if qs:
-            return '?'.join([path, qs])
+            return '&qs='.join([path, qs])
         return path
 
     @property

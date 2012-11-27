@@ -38,6 +38,8 @@ class Request(object):
         # relative url, e.g. //plugin.video.helloxbmc/path
         self.scheme, remainder = url.split(':', 1)
         parts = urlparse.urlparse(remainder)
-        self.netloc, self.path, self.query_string = (
-            parts[1], parts[2], parts[4])
+        pathqs = parse_qs(parts[4])
+        self.netloc = parts[1]
+        self.path = pathqs.get('path', ['/'])[0]
+        self.query_string = pathqs.get('qs', [''])[0]
         self.args = unpickle_args(parse_qs(self.query_string))
