@@ -198,6 +198,7 @@ class Plugin(XBMCMixin):
         # well
         if url is None:
             url = sys.argv[0]
+            #url = sys.argv[2]
             if len(sys.argv) == 3:
                 url += sys.argv[2]
         if handle is None:
@@ -283,6 +284,7 @@ class Plugin(XBMCMixin):
 
         pathqs = rule.make_path_qs(items)
         return 'plugin://%s%s' % (self._addon_id, pathqs)
+        #return 'plugin://%s%s' % (sys.argv[0], pathqs)
 
     def _dispatch(self, path):
         for rule in self._routes:
